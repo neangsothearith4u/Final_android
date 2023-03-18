@@ -1,5 +1,6 @@
 package com.sothearithcompany.spring_homework_restapi2.repository;
 
+import com.sothearithcompany.spring_homework_restapi2.model.entity.Author;
 import com.sothearithcompany.spring_homework_restapi2.model.entity.Book;
 import com.sothearithcompany.spring_homework_restapi2.model.request.BookRequest;
 import org.apache.ibatis.annotations.*;
@@ -15,9 +16,11 @@ public interface BookRepository {
             """)
     @Result(property = "bookId",column = "book_id")
     @Result(property = "publishedDate",column = "published_date")
+    // one from author table
     @Result(property = "authorId",column = "author_id",
     one = @One(select = "com.sothearithcompany.spring_homework_restapi2.repository.AuthorRepository.getAuthorById")
     )
+    // many from category table
     @Result(property = "categories",column = "book_id",
         many = @Many(select = "com.sothearithcompany.spring_homework_restapi2.repository.CategoryRepository.getAllCategoryById")
     )
@@ -29,9 +32,12 @@ public interface BookRepository {
             """)
     @Result(property = "bookId",column = "book_id")
     @Result(property = "publishedDate",column = "published_date")
+    // one from author table
     @Result(property = "authorId",column = "author_id",
             one = @One(select = "com.sothearithcompany.spring_homework_restapi2.repository.AuthorRepository.getAuthorById")
     )
+
+    // many from category table
     @Result(property = "categories",column = "book_id",
             many = @Many(select = "com.sothearithcompany.spring_homework_restapi2.repository.CategoryRepository.getAllCategoryById")
     )
@@ -50,12 +56,14 @@ public interface BookRepository {
     void insertBookCategory(Integer bookId,Integer categoryId);
 
     // Update Book
-    @Select("""
-            UPDATE book SET title=#{book.title},author_id =#{book.authorId} where author_id = #{id} returning author_id
+    @Update("""
+            UPDATE book SET title=#{book.title},author_id =#{book.authorId} where book_id = #{id}
             """)
-    Integer updateBookById(Integer id,@Param("book") BookRequest bookRequest);
+    @Result(property = "bookId",column = "book_id")
+    @Result(property = "publishedDate",column = "published_date")
+    void updateBookById(Integer id,@Param("book") BookRequest bookRequest);
     @Delete("""
-            DELETE FROM book_category WHERE book_id = #{id} 
+            DELETE FROM book_category WHERE book_id = #{id}
             """)
     void deleteBookCategoryByAuthorId(Integer id);
 
@@ -68,12 +76,7 @@ public interface BookRepository {
             """)
     Integer deleteBookById(Integer id);
 
-    // get author by id
 
-    @Select("""
-            SELECT author_id FROM author
-            """)
-    List<Integer> getAuthorId();
 
 
 

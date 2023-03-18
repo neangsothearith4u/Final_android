@@ -15,27 +15,27 @@ public class AuthorServiceImp implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
-    private void HandleString(){
-        AuthorRequest authorRequest = new AuthorRequest();
-        if (authorRequest.getAuthorName().isBlank()){
-            throw new BlankFieldExceptionHandler("Field name is blank");
-        }
-        if (authorRequest.getAuthorName().isEmpty()){
-            throw new BlankFieldExceptionHandler("Field name is empty");
-        }
-        if (authorRequest.getAuthorName().equals("string")){
-            throw new BlankFieldExceptionHandler("Field name is string");
-        }
-        if (authorRequest.getGender().isBlank()){
-            throw new BlankFieldExceptionHandler("Field gender is blank");
-        }
-        if (authorRequest.getGender().isEmpty()){
-            throw new BlankFieldExceptionHandler("Field gender is empty");
-        }
-        if (authorRequest.getGender().equals("string")){
-            throw new BlankFieldExceptionHandler("Field gender is string");
-        }
-    }
+//    private void HandleString(){
+//        AuthorRequest authorRequest = new AuthorRequest();
+//        if (authorRequest.getAuthorName().isBlank()){
+//            throw new BlankFieldExceptionHandler("Field name is blank");
+//        }
+//        if (authorRequest.getAuthorName().isEmpty()){
+//            throw new BlankFieldExceptionHandler("Field name is empty");
+//        }
+//        if (authorRequest.getAuthorName().equals("string")){
+//            throw new BlankFieldExceptionHandler("Field name is string");
+//        }
+//        if (authorRequest.getGender().isBlank()){
+//            throw new BlankFieldExceptionHandler("Field gender is blank");
+//        }
+//        if (authorRequest.getGender().isEmpty()){
+//            throw new BlankFieldExceptionHandler("Field gender is empty");
+//        }
+//        if (authorRequest.getGender().equals("string")){
+//            throw new BlankFieldExceptionHandler("Field gender is string");
+//        }
+//    }
 
     public AuthorServiceImp(AuthorRepository authorRepository) {
         this.authorRepository = authorRepository;
@@ -80,7 +80,27 @@ public class AuthorServiceImp implements AuthorService {
 
     @Override
     public Author updateAuthorById(Integer id, AuthorRequest authorRequest) {
-        HandleString();
+        if (getAuthorById(id) == null){
+            throw new NotFoundException("Author with  id : \' "+id+" \' not found....(~_~)");
+        }
+        if (authorRequest.getAuthorName().isBlank()){
+            throw new BlankFieldExceptionHandler("Field name is blank");
+        }
+        if (authorRequest.getAuthorName().isEmpty()){
+            throw new BlankFieldExceptionHandler("Field name is empty");
+        }
+        if (authorRequest.getAuthorName().equals("string")){
+            throw new BlankFieldExceptionHandler("Field name is string");
+        }
+        if (authorRequest.getGender().isBlank()){
+            throw new BlankFieldExceptionHandler("Field gender is blank");
+        }
+        if (authorRequest.getGender().isEmpty()){
+            throw new BlankFieldExceptionHandler("Field gender is empty");
+        }
+        if (authorRequest.getGender().equals("string")){
+            throw new BlankFieldExceptionHandler("Field gender is string");
+        }
         Author author =authorRepository.updateAuthorById(id,authorRequest);
         if(author == null){
             throw new NotFoundException("Author with  id : \' "+id+" \' not found....(~_~)");

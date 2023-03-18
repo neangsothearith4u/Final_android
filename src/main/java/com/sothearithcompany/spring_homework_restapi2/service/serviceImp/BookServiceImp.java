@@ -5,34 +5,44 @@ import com.sothearithcompany.spring_homework_restapi2.exception.NotFoundExceptio
 import com.sothearithcompany.spring_homework_restapi2.model.entity.Author;
 import com.sothearithcompany.spring_homework_restapi2.model.entity.Book;
 import com.sothearithcompany.spring_homework_restapi2.model.request.BookRequest;
+import com.sothearithcompany.spring_homework_restapi2.repository.AuthorRepository;
 import com.sothearithcompany.spring_homework_restapi2.repository.BookRepository;
+import com.sothearithcompany.spring_homework_restapi2.repository.CategoryRepository;
 import com.sothearithcompany.spring_homework_restapi2.service.service.BookService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
 public class BookServiceImp implements BookService {
 
     private final BookRepository bookRepository;
-
-    public BookServiceImp(BookRepository bookRepository) {
+    private final AuthorRepository authorRepository;
+    private final CategoryRepository categoryRepository;
+    public BookServiceImp(BookRepository bookRepository, AuthorRepository authorRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
+        this.categoryRepository = categoryRepository;
     }
 
+
+
+    // get all books
     @Override
     public List<Book> getAllBooks() {
         List<Book> books = bookRepository.getAllBooks();
+        // validate on book if book table is empty
         if (books == null){
             throw new NotFoundException("The database is empty...!");
         }
         return books;
     }
 
+    // get book by id
     @Override
     public Book getBookById(Integer id) {
         Book book = bookRepository.getBookById(id);
+        // validate book if can not find book id
         if (book == null){
             throw new NotFoundException("Book with  id : \' "+id+" \' not found....(~_~)");
         }
@@ -41,8 +51,8 @@ public class BookServiceImp implements BookService {
 
     @Override
     public Book addNewBook(BookRequest bookRequest) {
-        Integer bookId = bookRepository.addNewBook(bookRequest);
 
+        // validate on title field
         if (bookRequest.getTitle().isBlank()){
             throw new BlankFieldExceptionHandler("Field name is blank");
         }
@@ -52,28 +62,63 @@ public class BookServiceImp implements BookService {
         if (bookRequest.getTitle().equals("string")){
             throw new BlankFieldExceptionHandler("Field name is string");
         }
-
-        for (Integer authorId : bookRepository.getAuthorId()){
-            if (bookRequest.getAuthorId() != authorId){
-                throw new NotFoundException("Book with  id : \' "+bookRequest.getAuthorId()+" \' not found....(~_~)");
-            }
+        // validate on author id
+        Author author = authorRepository.getAuthorById(bookRequest.getAuthorId());
+        if (author == null){
+            throw new NotFoundException("author with  id : \' "+bookRequest.getAuthorId()+" \' not found....(~_~)");
         }
-
+        // validate on categoy id
+        if (bookRequest.getCategoryId().isEmpty()){
+            throw new BlankFieldExceptionHandler("Category ID is empty");
+        }
+        // Insert category id to book_category table
+        Integer bookId = bookRepository.addNewBook(bookRequest);
         for (Integer categoryId : bookRequest.getCategoryId()){
-//            if (Pattern.matches("[0-9]+",String.valueOf(categoryId))){
-//                throw new BlankFieldExceptionHandler("Input only number...!");
-//            }
+            //validate on insert category id
+            if (categoryRepository.getCategoryById(categoryId) == null){
+                throw new NotFoundException("category with  id : \' "+categoryId+" \' not found....(~_~)");
+            }
             bookRepository.insertBookCategory(bookId,categoryId);
         }
+        // return Book after insert
        return bookRepository.getBookById(bookId);
 
     }
 
+
+    // Update Book
     @Override
     public Book updateBookById(Integer id, BookRequest bookRequest) {
-        Integer bookId=  bookRepository.updateBookById(id,bookRequest);
+        // validate book if can not find book id
+        if (getBookById(id) == null){
+            throw new NotFoundException("Book with  id : \' "+id+" \' not found....(~_~)");
+        }
+        // validate on title field
+        if (bookRequest.getTitle().isBlank()){
+            throw new BlankFieldExceptionHandler("Field name is blank");
+        }
+        if (bookRequest.getTitle().isEmpty()){
+            throw new BlankFieldExceptionHandler("Field name is empty");
+        }
+        if (bookRequest.getTitle().equals("string")){
+            throw new BlankFieldExceptionHandler("Field name is string");
+        }
+        // validate on author id
+        Author author = authorRepository.getAuthorById(bookRequest.getAuthorId());
+        if (author == null){
+            throw new NotFoundException("Book with  id : \' "+bookRequest.getAuthorId()+" \' not found....(~_~)");
+        }
+        // validate on categoy id
+        if (bookRequest.getCategoryId().isEmpty()){
+            throw new BlankFieldExceptionHandler("Category ID is empty");
+        }
+        bookRepository.updateBookById(id,bookRequest);
         bookRepository.deleteBookCategoryByAuthorId(id);
         for (Integer categoryId: bookRequest.getCategoryId()){
+            //validate on insert category id
+            if (categoryRepository.getCategoryById(categoryId) == null){
+                throw new NotFoundException("category with  id : \' "+categoryId+" \' not found....(~_~)");
+            }
             bookRepository.insertBookCategory(id,categoryId);
         }
         return bookRepository.getBookById(id);
@@ -81,6 +126,10 @@ public class BookServiceImp implements BookService {
 
     @Override
     public void deleteBookById(Integer id) {
+        // validate book if can not find book id
+        if (getBookById(id) == null){
+            throw new NotFoundException("Book with  id : \' "+id+" \' not found....(~_~)");
+        }
         bookRepository.deleteBookById(id);
         bookRepository.deleteBookCategoryByAuthorId(id);
     }

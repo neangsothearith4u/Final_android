@@ -56,13 +56,13 @@ public class CategoryServiceImp implements CategoryService {
     @Override
     public Category addNewCategory(CategoryRequest categoryRequest) {
         if (categoryRequest.getCategoryName().isBlank()){
-            throw new BlankFieldExceptionHandler("Field name is blank");
+            throw new BlankFieldExceptionHandler("Field category name is blank");
         }
         if (categoryRequest.getCategoryName().isEmpty()){
-            throw new BlankFieldExceptionHandler("Field name is empty");
+            throw new BlankFieldExceptionHandler("Field category name is empty");
         }
         if (categoryRequest.getCategoryName().equals("string")){
-            throw new BlankFieldExceptionHandler("Field name is string");
+            throw new BlankFieldExceptionHandler("Field category name is string");
         }
         return categoryRepository.addNewCategory(categoryRequest);
     }
@@ -74,13 +74,13 @@ public class CategoryServiceImp implements CategoryService {
             throw new NotFoundException("Category with  id : \' "+id+" \' not found....(~_~)");
         }
         if (categoryRequest.getCategoryName().isBlank()){
-            throw new BlankFieldExceptionHandler("Field name is blank");
+            throw new BlankFieldExceptionHandler("Field category name is blank");
         }
         if (categoryRequest.getCategoryName().isEmpty()){
-            throw new BlankFieldExceptionHandler("Field name is empty");
+            throw new BlankFieldExceptionHandler("Field category name is empty");
         }
         if (categoryRequest.getCategoryName().equals("string")){
-            throw new BlankFieldExceptionHandler("Field name is string");
+            throw new BlankFieldExceptionHandler("Field category name is string");
         }
         return categoryRepository.updateCategory(id,categoryRequest);
     }

@@ -9,6 +9,8 @@ import java.util.List;
 @Mapper
 public interface AuthorRepository {
 
+
+    // get all author
     @Select("""
             SELECT * FROM author
             """)
@@ -19,24 +21,32 @@ public interface AuthorRepository {
     List<Author> getAllAuthor();
 
 
+    // get  author by id
     @Select("""
             SELECT * FROM author where author_id = #{id}
             """)
     @ResultMap("mapping")
     Author getAuthorById(Integer id);
 
+
+    // add new author
     @Select("""
             INSERT INTO author (author_name, gender) values (#{authorName},#{gender}) 
             returning *
             """)
+    @ResultMap("mapping")
     Author addNewAuthor(AuthorRequest authorRequest);
 
+
+    // update author
     @Select("""
             UPDATE author SET author_name = #{author.authorName},gender=#{author.gender} where author_id = #{id} returning *
             """)
     @ResultMap("mapping")
     Author updateAuthorById(Integer id,@Param("author") AuthorRequest authorRequest);
 
+
+    // delete author
     @Delete("""
             DELETE FROM author where author_id = #{id} 
             """)
