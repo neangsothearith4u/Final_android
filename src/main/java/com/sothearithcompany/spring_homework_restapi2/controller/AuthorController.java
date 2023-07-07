@@ -4,6 +4,7 @@ import com.sothearithcompany.spring_homework_restapi2.model.entity.Author;
 import com.sothearithcompany.spring_homework_restapi2.model.request.AuthorRequest;
 import com.sothearithcompany.spring_homework_restapi2.model.response.ApiResponse;
 import com.sothearithcompany.spring_homework_restapi2.service.service.AuthorService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/")
+@CrossOrigin(origins = "http://localhost:3000")
+@SecurityRequirement(name = "BearerAuth")
 public class AuthorController {
 
     private final AuthorService authorService;

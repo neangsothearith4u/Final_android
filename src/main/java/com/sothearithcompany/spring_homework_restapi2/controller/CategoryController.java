@@ -4,6 +4,7 @@ import com.sothearithcompany.spring_homework_restapi2.model.entity.Category;
 import com.sothearithcompany.spring_homework_restapi2.model.request.CategoryRequest;
 import com.sothearithcompany.spring_homework_restapi2.model.response.ApiResponse;
 import com.sothearithcompany.spring_homework_restapi2.service.service.CategoryService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/v1")
+@SecurityRequirement(name = "BearerAuth")
 public class CategoryController {
 
     private final CategoryService categoryService;

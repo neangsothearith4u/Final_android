@@ -19,7 +19,6 @@ public class GlobalExceptionHandler {
     ProblemDetail handleNotFoundException(NotFoundException e){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND,e.getMessage());
         problemDetail.setProperty("time", LocalDateTime.now());
-
         return problemDetail;
     }
 
@@ -28,6 +27,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BlankFieldExceptionHandler.class)
     ProblemDetail handleBlankFieldException(BlankFieldExceptionHandler e){
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST,e.getMessage());
+        problemDetail.setProperty("time", LocalDateTime.now());
+        return problemDetail;
+    }
+    @ExceptionHandler(FieldBlankExceptionHandler.class)
+    ProblemDetail handleBlankField(FieldBlankExceptionHandler e) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
         problemDetail.setProperty("time", LocalDateTime.now());
         return problemDetail;
     }
