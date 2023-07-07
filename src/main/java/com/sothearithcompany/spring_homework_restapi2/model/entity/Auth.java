@@ -19,21 +19,14 @@ public class Auth  implements UserDetails {
     private Integer userId;
     private String firstName;
     private String lastName;
-
     private String email;
     private String password;
     private String phoneNumber;
     private String role;
-    private Integer roleId;
 
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if (roleId == 1){
-            setRole("ADMIN");
-        } else if (roleId == 2){
-            setRole("USER");
-        }
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toUpperCase());
         return Collections.singletonList(authority);
     }
