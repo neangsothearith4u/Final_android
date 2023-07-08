@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SecurityScheme(
         name = "bearer",
         type = SecuritySchemeType.HTTP,
-        scheme = "bearerAuth"
+        scheme = "bearer"
 )
 public class SpringHomeworkRestApi2Application {
 
