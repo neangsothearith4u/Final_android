@@ -1,6 +1,5 @@
-package com.sothearithcompany.spring_homework_restapi2.model.entity;
+package com.sothearithcompany.spring_homework_restapi2.model.appUser;
 
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,29 +10,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class Auth  implements UserDetails {
-    @Min(value = 0,message = "")
-    private Integer userId;
-    private String firstName;
-    private String lastName;
+// this class create user template
+public class AppUser implements UserDetails {
+    private Integer id;
     private String email;
     private String password;
-    private String phoneNumber;
+    private String firstName;
+    private String lastName;
+    private String phone;
     private String role;
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.toUpperCase());
         return Collections.singletonList(authority);
     }
-    @Override
-    public String getPassword() {
-        return password;
-    }
+
+//    this is for granting access based on role
 
     @Override
     public String getUsername() {
@@ -41,22 +37,30 @@ public class Auth  implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return password;
+    }
+
+
+    @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
+    // set expire
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
+    //Is this account enabled
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

@@ -1,5 +1,7 @@
-package com.sothearithcompany.spring_homework_restapi2.model.request;
+package com.sothearithcompany.spring_homework_restapi2.model.appUser;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,11 +10,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AuthRequest {
-    private String firstName;
-    private String lastName;
+public class AppUserRequest {
     private String email;
     private String password;
-    private String phoneNumber;
+    private String firstName;
+    private String lastName;
+    private String phone;
     private String role;
 }

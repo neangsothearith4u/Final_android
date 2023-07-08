@@ -1,12 +1,11 @@
-package com.sothearithcompany.spring_homework_restapi2.jwt;
+package com.sothearithcompany.spring_homework_restapi2.config;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sothearithcompany.spring_homework_restapi2.service.serviceImp.AuthServiceImp;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.sothearithcompany.spring_homework_restapi2.service.implement.JwtUserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,34 +21,50 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Component
-@AllArgsConstructor
-public class JwtTokenFilter extends OncePerRequestFilter {
-    private AuthServiceImp authServiceImp;
-    private JwtTokenUtil jwtTokenUtil;
+public class JwtRequestFilter extends OncePerRequestFilter {
+
+    private final JwtUserDetailsServiceImpl jwtUserDetailsService;
+
+    private final JwtTokenUtil jwtTokenUtil;
+
+    public JwtRequestFilter(JwtUserDetailsServiceImpl jwtUserDetailsService, JwtTokenUtil jwtTokenUtil) {
+        this.jwtUserDetailsService = jwtUserDetailsService;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-
+//        if (request.getServletPath().equals("/authorization/**")){
+//            chain.doFilter(request, response);
+//        }
         final String requestTokenHeader = request.getHeader("Authorization");
 
-        String username = null;
+        String email = null;
         String jwtToken = null;
         // JWT Token is in the form "Bearer token". Remove Bearer word and get
         // only the Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
-                username = jwtTokenUtil.getUsernameFromToken(jwtToken);
-            } catch (IllegalArgumentException e) {
-                System.out.println("Unable to get JWT Token");
-            } catch (ExpiredJwtException e) {
-                System.out.println("JWT Token has expired");
-            } catch (Exception e){
-                response.setHeader("error", e.getMessage());
+                email = jwtTokenUtil.getUsernameFromToken(jwtToken);
+            }
+//            catch (IllegalArgumentException e) {
+//                System.out.println("Unable to get JWT Token");
+////                throw new BadRequestException("Unable to get JWT Token");
+//            } catch (ExpiredJwtException e) {
+//                response.setHeader("error:", exception.getMessage());
+//                response.setStatus(FORBIDDEN.value());
+//                Map<String, String> error = new HashMap<>();
+//                error.put("error_message", exception.getMessage());
+//                response.setContentType(APPLICATION_JSON_VALUE);
+//                new ObjectMapper().writeValue(response.getOutputStream(), error);
+//            }
+            catch (Exception exception) {
+                response.setHeader("error", exception.getMessage());
                 response.setStatus(FORBIDDEN.value());
                 Map<String, String> error = new HashMap<>();
-                error.put("error_message", e.getMessage());
+                error.put("error_message", exception.getMessage());
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), error);
             }
@@ -58,9 +73,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         // Once we get the token validate it.
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails = this.authServiceImp.loadUserByUsername(username);
+            UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername(email);
 
             // if token is valid configure Spring Security to manually set
             // authentication
