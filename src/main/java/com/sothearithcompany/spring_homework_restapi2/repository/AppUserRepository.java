@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Select;
 public interface AppUserRepository {
     @Select("""
             INSERT INTO user_tb
-            VALUES (DEFAULT, #{email}, #{firstName}, #{lastName}, #{phone}, #{password}, #{role})
+            VALUES (DEFAULT, #{email}, #{firstName}, #{lastName}, #{phone}, #{password}, #{role},DEFAULT)
             RETURNING id, email, password, role, phone_number AS phone, first_name AS firstName, last_name AS lastName;
             """)
     AppUser insertUser(AppUserRequest appUserRequest);
