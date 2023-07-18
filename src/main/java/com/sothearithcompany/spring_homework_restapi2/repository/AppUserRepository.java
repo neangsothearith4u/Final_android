@@ -3,6 +3,8 @@ package com.sothearithcompany.spring_homework_restapi2.repository;
 import com.sothearithcompany.spring_homework_restapi2.model.appUser.AppUser;
 import com.sothearithcompany.spring_homework_restapi2.model.appUser.AppUserRequest;
 import com.sothearithcompany.spring_homework_restapi2.model.jwt.JwtChangePasswordRequest;
+import com.sothearithcompany.spring_homework_restapi2.model.user.User;
+import com.sothearithcompany.spring_homework_restapi2.model.user.UserRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Result;
@@ -158,4 +160,45 @@ public interface AppUserRepository {
             SELECT EXISTS(SELECT * FROM user_tb WHERE email ILIKE '${email}');
             """)
     boolean checkDuplicateUser(String email);
+
+    @Select("""
+            UPDATE user_tb
+            SET email        = #{user.email},
+                first_name   = #{user.firstName},
+                last_name    = #{user.lastName},
+                phone_number = #{user.phone},
+                password     = #{user.password},
+                role         = #{user.role},
+                is_active    = #{user.isActive}
+            WHERE id = #{id}
+            RETURNING
+                id,
+                email,
+                first_name AS firstName,
+                last_name AS lastName,
+                phone_number AS phone,
+                password,
+                role,
+                is_active AS isActive;
+            """)
+    User updateUser(Integer id,@Param("user") UserRequest user);
+
+    @Select("""
+            SELECT id,
+                   email,
+                   first_name AS firstName,
+                   last_name AS lastName,
+                   phone_number AS phone,
+                   password,
+                   role,
+                   is_active AS isActive
+            FROM user_tb
+            WHERE id = #{id};
+            """)
+    User getUserById(Integer id);
+
+    @Select("""
+            SELECT exists(SELECT * FROM user_tb WHERE id = #{id});
+            """)
+    boolean checkIfUserExist(Integer id);
 }
