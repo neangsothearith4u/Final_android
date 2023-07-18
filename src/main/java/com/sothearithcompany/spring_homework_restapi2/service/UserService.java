@@ -6,4 +6,6 @@ import com.sothearithcompany.spring_homework_restapi2.model.user.UserRequest;
 
 public interface UserService {
     User updateUser(Integer id, UserRequest userRequest);
+
+    String deleteUser(Integer id);
 }

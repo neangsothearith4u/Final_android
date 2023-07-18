@@ -1,5 +1,6 @@
 package com.sothearithcompany.spring_homework_restapi2.service.serviceImp;
 
+import com.sothearithcompany.spring_homework_restapi2.exception.InternalServerErrorException;
 import com.sothearithcompany.spring_homework_restapi2.exception.NotFoundException;
 import com.sothearithcompany.spring_homework_restapi2.model.user.User;
 import com.sothearithcompany.spring_homework_restapi2.model.user.UserRequest;
@@ -25,7 +26,24 @@ public class UserServiceImplV1 implements UserService {
             throw new NotFoundException("User not found.");
         }
         // update user
-        User user = appUserRepository.updateUser(id, userRequest);
-        return user;
+        try {
+            return appUserRepository.updateUser(id, userRequest);
+        } catch (Exception e){
+           throw new InternalServerErrorException("Error: "+ e.getMessage());
+        }
+    }
+
+    @Override
+    public String deleteUser(Integer id) {
+        // check user exist
+        if (!appUserRepository.checkIfUserExist(id)){
+            throw new NotFoundException("User not found.");
+        }
+        // delete user
+        try {
+            return appUserRepository.deleteUser(id);
+        } catch (Exception e){
+            throw new InternalServerErrorException("Error: "+ e.getMessage());
+        }
     }
 }

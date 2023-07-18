@@ -5,10 +5,7 @@ import com.sothearithcompany.spring_homework_restapi2.model.appUser.AppUserReque
 import com.sothearithcompany.spring_homework_restapi2.model.jwt.JwtChangePasswordRequest;
 import com.sothearithcompany.spring_homework_restapi2.model.user.User;
 import com.sothearithcompany.spring_homework_restapi2.model.user.UserRequest;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 @Mapper
 public interface AppUserRepository {
@@ -201,4 +198,10 @@ public interface AppUserRepository {
             SELECT exists(SELECT * FROM user_tb WHERE id = #{id});
             """)
     boolean checkIfUserExist(Integer id);
+
+    @Delete("""
+            DELETE FROM user_tb WHERE id = #{id}
+            RETURNING 'Deleted successfully';
+            """)
+    String deleteUser(Integer id);
 }
